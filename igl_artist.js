@@ -60,10 +60,33 @@ req.on('error', (e) => {
 // "category":
 // "language":
 // "deckNumber"
-var postData = (search, artist) => {
-  var data = JSON.stringify({
-    'name': `${artist}`,
-  });
+var postData = (search, artist, year, location) => {
+  var data;
+  if (year != "") {
+	if (location != "") {
+  		data = JSON.stringify({
+    		'name': `${artist}`,
+    		'year': `${year}`,
+    		'eventCity': `${location}`
+  		});
+	} else {
+		if(isNaN(year)) {
+  			data = JSON.stringify({
+    			'name': `${artist}`,
+    			'eventCity': `${year}`
+  			});
+		} else {
+  			data = JSON.stringify({
+    			'name': `${artist}`,
+    			'year': `${year}`
+  			});
+		};
+	};
+   } else {
+  		data = JSON.stringify({
+    		'name': `${artist}`
+  		});
+   };
   console.log(data);
   search(data);
 };
@@ -80,18 +103,28 @@ var FBBotFramework = require("fb-bot-framework");
 // Initialize
 var bot = new FBBotFramework({
 page_token: /* PAGE TOKEN */,
-verify_token:  /* VERIFY TOKEN */
+verify_token: /* VERIFY TOKEN */
 });
 // Setup Express middleware for /webhook
 app.use('/webhook', bot.middleware());
 // Setup listener for incoming messages
 bot.on('message', function(userId, message){
-//var str = message.split(" ");
+var str = message.split(" ");
+console.log(str.length);
 //console.log(str[1], str[0]);
+switch (str.length) {
+case 1: postData(search, str[0], "", "");
+	break;
+case 2: postData(search, str[0], str[1], "");
+	break;
+case 3: postData(search, str[0], str[1], str[2]);
+	break;
+};
+
 //postData(search, str[0], str[1]);
-postData(search, message); 
+//postData(search, message); 
 if (!queryError) {
-	bot.sendTextMessage(userId, ("List of Videos of " + message + ":\n"));
+	bot.sendTextMessage(userId, ("List of Videos of " + str[0] + ":\n"));
 	bot.sendTextMessage(userId, ResponseText2);
 	bot.sendTextMessage(userId, "\n");
 } 
