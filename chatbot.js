@@ -157,8 +157,8 @@ var FBBotFramework = require("fb-bot-framework");
 var ResponseText = "";
 // Initialize
 var bot = new FBBotFramework({
-  page_token: // get page token
-  verify_token: // get verify token
+  page_token:  /* PAGE TOKEN */,
+  verify_token:  /* VERIFY TOKEN */
 });
 // Setup Express middleware for /webhook
 app.use('/webhook', bot.middleware());
